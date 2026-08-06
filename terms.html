@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service | TallyTrigger</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['DM Sans', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    animation: {
+                        'fade-up': 'fadeUp 0.7s ease-out forwards',
+                        'fade-up-delay-1': 'fadeUp 0.7s ease-out 0.1s forwards',
+                        'fade-up-delay-2': 'fadeUp 0.7s ease-out 0.2s forwards',
+                        'fade-up-delay-3': 'fadeUp 0.7s ease-out 0.3s forwards',
+                        'fade-up-delay-4': 'fadeUp 0.7s ease-out 0.4s forwards',
+                        'pulse-soft': 'pulseSoft 5s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        pulseSoft: {
+                            '0%, 100%': { opacity: '0.35' },
+                            '50%': { opacity: '0.65' },
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0a0f14;
+            background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(16, 185, 129, 0.1), transparent);
+        }
+        .content-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .logo-line-1 {
+            font-size: 1.8rem;
+            line-height: 2rem;
+        }
+    </style>
+</head>
+<body class="text-slate-300 font-sans antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Navigation Header -->
+    <header class="p-6 max-w-4xl mx-auto w-full flex justify-between items-center border-b border-slate-800/60">
+    <!-- TallyTrigger TEXT LOGO -->
+     <a href="index.html" class="inline-flex items-center gap-3 font-sans select-none group">
+  <!-- Icon Block: Uses 'TT' layout for TallyTrigger -->
+  <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-700 text-slate-950 font-black text-xl shadow-lg shadow-emerald-500/20 ring-1 ring-white/20 group-hover:scale-105 transition-transform duration-200">
+    <span>TT</span>
+    
+    <!-- Sync Loop Icon Badge -->
+    <svg class="absolute -top-1 -right-1 w-4 h-4 text-emerald-300 drop-shadow" 
+         fill="none" 
+         stroke="currentColor" 
+         stroke-width="2.5" 
+         viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" 
+            d="M4 12a8 8 0 0 1 13.66-5.66L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 0 1-13.66 5.66L4 15.5M4 20v-4.5h4.5" />
+    </svg>
+  </div>
+
+  <!-- Text Block: Shifts hierarchy to the approved platform compatibility style -->
+  <div class="flex flex-col text-left leading-none">
+    <div class="flex items-center gap-1.5">
+      <span class="logo-line-1 font-black tracking-tight text-white">
+        TallyTrigger<span class="text-emerald-400">.</span>
+      </span>
+    </div>
+    <span class="text-[9px] font-semibold tracking-wider text-slate-400 uppercase mt-1">
+      Compatible with Clover® POS
+    </span>
+  </div>
+</a>
+
+        <a href="index.html" class="text-xs font-semibold text-emerald-400 hover:underline">&larr; Back to Main Site</a>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-6 py-12 w-full my-auto">
+        <div class="content-card p-8 md:p-12 rounded-2xl shadow-xl space-y-6">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">Terms of Service</h1>
+            <p class="text-xs text-slate-400 font-mono">Last Updated: August 2026</p>
+            
+            <hr class="border-slate-800 my-6">
+
+            <section class="space-y-3">
+                <h2 class="text-xl font-bold text-emerald-400">1. Acceptance of Terms</h2>
+                <p class="text-sm leading-relaxed">
+                    Submitting your email for early access, or using our software services, you agree to these Terms of Service. If you do not agree, please discontinue use of our site and services immediately.
+                </p>
+                <p class="text-sm leading-relaxed text-slate-400">
+                    This service is currently operated by an independent individual developer. No registered business entity has been formed at this time. These terms will be updated to reflect any change in legal structure. The limitation of liability clause in Section 6 applies to the individual operator to the extent permitted by applicable law.
+                </p>
+                <p class="text-sm leading-relaxed text-amber-400/80 bg-amber-500/5 border border-amber-500/20 rounded-lg px-4 py-3">
+                    <strong>Pre-Launch Notice:</strong> The software described in these Terms is currently under development and not yet available to users. At this time, the only active activity is the collection of email addresses for early access interest registration. Subscription, billing, and service usage terms below are forward-looking documentation only and will be updated before any service launches.
+                </p>
+            </section>
+
+            <section class="space-y-3">
+                <h2 class="text-xl font-bold text-emerald-400">2. Service Description</h2>
+                <p class="text-sm leading-relaxed">TallyTrigger is an automated reporting utility for Clover&reg; POS merchants. The service is being developed in phases:</p>
+                <p class="text-sm font-semibold text-slate-200 mt-2">Beta (Initial Release):</p>
+                <ul class="list-disc list-inside text-sm space-y-2 text-slate-300 pl-2">
+                    <li><strong>Scheduled Report Delivery:</strong> Automated retrieval of your Clover sales data and scheduled email delivery to one or more recipients at a frequency you configure.</li>
+                    <li><strong>Multi-Format Export:</strong> Reports formatted as Excel (.XLSX), PDF, CSV, or QuickBooks Desktop import file (.IIF).</li>
+                    <li><strong>Custom Column Mapping:</strong> Rename data fields to match your accountant's ledger naming conventions.</li>
+                    <li><strong>Delivery Log:</strong> A history of all past report delivery attempts accessible in your dashboard.</li>
+                </ul>
+                <p class="text-sm font-semibold text-slate-200 mt-2">Planned Future Release (Pro Tier):</p>
+                <ul class="list-disc list-inside text-sm space-y-2 text-slate-300 pl-2">
+                    <li><strong>QuickBooks Online Live Sync:</strong> Real-time push of Clover transaction data directly into your QuickBooks Online company file. This feature is not available in beta and will be introduced in a later release.</li>
+                </ul>
+                <p class="text-sm leading-relaxed">Features and availability may change. We will notify active subscribers of material changes to the service.</p>
+            </section>
+
+            <section class="space-y-3">
+                <h2 class="text-xl font-bold text-emerald-400">3. Waitlist &amp; Beta Access Disclaimers</h2>
+                <p class="text-sm leading-relaxed">
+                    Submitting your email on our pre-launch page does not guarantee immediate software access or specific service terms. Product features, trial durations, and pricing shown prior to launch are subject to change. Beta features may contain errors or incomplete functionality.
+                </p>
+            </section>
+
+            <section class="space-y-3">
+                <h2 class="text-xl font-bold text-emerald-400">4. Subscriptions &amp; Billing</h2>
+                <p class="text-sm leading-relaxed text-slate-400 italic">Billing and subscriptions are not yet active. The pricing and plan details below describe the intended model, which is subject to change before launch.</p>
+                <p class="text-sm leading-relaxed">If and when the service launches, access after any free trial period will require a paid subscription:</p>
+                <ul class="list-disc list-inside text-sm space-y-2 text-slate-300 pl-2">
+                    <li><strong>Free Trial:</strong> New accounts receive a limited free trial with full access to beta features. No credit card is required to start. Trial duration is subject to change.</li>
+                    <li><strong>Starter Plan:</strong> Monthly subscription covering scheduled report delivery, all export formats, and custom column mapping.</li>
+                    <li><strong>Pro Plan (Future):</strong> A higher tier planned for a later release, adding QuickBooks Online Live Sync and additional capabilities. Pricing will be confirmed at launch.</li>
+                    <li><strong>Billing:</strong> Subscriptions are billed monthly in advance via Stripe, Inc. We do not store your payment card details.</li>
+                    <li><strong>Cancellation:</strong> Cancel at any time. Cancellation takes effect at end of the current billing period with no partial-month refund. Account data may be retained for a limited period after cancellation to facilitate account recovery or comply with legal obligations, after which it will be deleted in accordance with our Privacy Policy.</li>
+                </ul>
+            </section>
+
+            <section class="space-y-3">
+                <h2 class="text-xl font-bold text-emerald-400">5. User Responsibilities</h2>
+                <p class="text-sm leading-relaxed">As a user, merchant, accountant, or authorized representative, you agree that:</p>
+                <ul class="list-disc list-inside text-sm space-y-2 text-slate-300 pl-2">
+                    <li>You have the legal authority to authorize data access from your business POS system.</li>
+                    <li>You will provide accurate recipient email addresses for report delivery.</li>
+                    <li>You remain responsible for maintaining access security to your Clover merchant account.</li>
+                    <li>You are responsible for reviewing exported reports before using them for accounting, tax, payroll, or business decisions.</li>
+                    <li>You will not use TallyTrigger to access data from Clover accounts for which you do not have authorized access.</li>
+                </ul>
+            </section>
+
+            <section class="space-y-3">
+                <h2 class="text-xl font-bold text-emerald-400">6. Limitation of Liability</h2>
+                <p class="text-sm leading-relaxed">
+To the fullest extent permitted by applicable law, the operator of TallyTrigger shall not be liable for any indirect, incidental, consequential, special, or punitive damages arising from the use of the service.                </p>
+            </section>
+
+            <section class="space-y-3">
+                <h2 class="text-xl font-bold text-emerald-400">7. Third-Party Integrations</h2>
+                <p class="text-sm leading-relaxed">TallyTrigger connects to Clover&reg; via its official API. Future releases may add integrations with other platforms (such as QuickBooks Online&reg;). For any active integration:</p>
+                <ul class="list-disc list-inside text-sm space-y-2 text-slate-300 pl-2">
+                    <li>Your use of the Clover integration is subject to Clover's Developer Terms and your Clover merchant agreement.</li>
+                    <li>TallyTrigger is not responsible for changes to third-party APIs, platform downtime, or data format changes imposed by those platforms.</li>
+                    <li>You may revoke TallyTrigger's access to your Clover account at any time from within Clover's authorization settings.</li>
+                </ul>
+            </section>
+
+<section class="space-y-3">
+    <h2 class="text-xl font-bold text-emerald-400">8. Suspension or Termination</h2>
+    <p class="text-sm leading-relaxed">We may suspend or terminate access to our services if necessary to protect our systems, comply with legal obligations, prevent misuse, or discontinue a beta program or service offering.</p>
+</section>
+
+<section class="space-y-3">
+    <h2 class="text-xl font-bold text-emerald-400">9. Changes to These Terms</h2>
+    <p class="text-sm leading-relaxed">We may update these Terms from time to time. Updated versions will be posted on this page with a revised effective date. Continued use of the service after changes become effective constitutes acceptance of the updated Terms.</p>
+</section>
+
+
+
+            <section class="space-y-3">
+                <h2 class="text-xl font-bold text-emerald-400">10. Trademarks &amp; Legal Disclaimers</h2>
+                <p class="text-sm leading-relaxed">
+                    Clover&reg; and related marks are trademarks of Clover Network, LLC or its affiliates. QuickBooks&reg; is a registered trademark of Intuit Inc. TallyTrigger is an independent application and is not affiliated with, endorsed by, sponsored by, or supported by Clover Network, LLC, Fiserv, Inc., or Intuit Inc.
+                </p>
+            </section>
+
+<section class="space-y-3">
+    <h2 class="text-xl font-bold text-emerald-400">11. Governing Law</h2>
+    <p class="text-sm leading-relaxed">These Terms are governed by the laws of the jurisdiction in which the operator of TallyTrigger resides, unless otherwise required by applicable law.</p>
+</section>
+
+<section class="space-y-3">
+    <h2 class="text-xl font-bold text-emerald-400">12. Professional Advice Disclaimer</h2>
+    <p class="text-sm leading-relaxed">TallyTrigger provides reporting and data formatting tools and does not provide accounting, tax, legal, or financial advice. Users should consult qualified professionals for such decisions.</p>
+</section>
+
+            <section class="space-y-3">
+                <h2 class="text-xl font-bold text-emerald-400">13. Contact Information</h2>
+                <p class="text-sm leading-relaxed">
+                    For inquiries regarding these Terms of Service, contact us at <a href="mailto:trytallytrigger@yahoo.com" class="text-emerald-400 underline">trytallytrigger@yahoo.com</a>.
+                </p>
+            </section>
+        </div>
+    </main>
+
+
+
+
+<!-- Update copyright with your real name or registered entity once formed -->
+<footer class="p-6 text-center text-xs text-slate-500 border-t border-slate-800/60">
+    &copy; 2026 TallyTrigger. Website content and software under development.
+</footer>
+
+</body>
+</html>
