@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import crypto from 'crypto'
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -9,7 +10,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { email, featureRequests } = req.body;
+        const { email, featureRequests, eventId } = req.body;
 
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             return res.status(400).json({
@@ -38,6 +39,35 @@ export default async function handler(req, res) {
                 <p><small>${new Date().toISOString()}</small></p>
             `,
         });
+
+        const hashedEmail = crypto.createHash('sha256').update(email.trim().toLowerCase()).digest('hex');
+        let ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        if (ipAddress && ipAddress.includes(',')) {
+            ipAddress = ipAddress.split(',')[0].trim(); // Fixed splitting array bug
+        }
+        const userAgent = req.headers['user-agent'];
+        const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+
+        try {
+        await fetch(`https://graph.facebook.com/v21.0/${pixelId}/events?access_token=${process.env.META_CAPI_TOKEN}`, {            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                data: [{
+                event_name: 'Lead',
+                event_time: Math.floor(Date.now() / 1000),
+                event_id: eventId,             // Must match front-end exactly
+                action_source: 'website',
+                user_data: { 
+                    em: [hashedEmail],
+                    client_ip_address: ipAddress, // Helps Meta match the profile
+                    client_user_agent: userAgent  // Helps Meta match the profile
+                },
+                }],
+            }),
+            });
+        } catch (metaError) {
+            console.error("[META_CAPI_ERROR]", metaError);
+        }
 
         return res.status(200).json({
             success: true,

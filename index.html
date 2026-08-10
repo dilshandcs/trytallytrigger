@@ -460,6 +460,9 @@
     });
         document.getElementById('smoke-test-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const uniqueEventId = 'lead_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            fbq('track', 'Lead', {content_category: 'Sign Up Form'}, { eventID: uniqueEventId });
+
             const emailValue = document.getElementById('target-email').value;
             
             const actionBtn = document.getElementById('action-btn');
@@ -467,12 +470,12 @@
 
             actionBtn.disabled = true;
             actionBtn.innerText = "Joining Waitlist...";
-
+            
             try {
                 const response = await fetch('/api/signup', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: emailValue })
+                    body: JSON.stringify({ email: emailValue, eventId: uniqueEventId })
                 });
                 const payload = await response.json();
                 
