@@ -63,6 +63,8 @@ export default async function handler(req, res) {
                     client_user_agent: userAgent  // Helps Meta match the profile
                 },
                 }],
+                test_event_code: TEST42745
+
             }),
             });
         } catch (metaError) {
