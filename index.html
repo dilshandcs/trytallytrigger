@@ -132,6 +132,53 @@
             line-height: 2rem;
         }
 
+                /* Image popup */
+        .image-lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: rgba(2, 6, 23, 0.88);
+            backdrop-filter: blur(8px);
+        }
+
+        .image-lightbox.is-open {
+            display: flex;
+        }
+
+        .image-lightbox img {
+            max-width: 94vw;
+            max-height: 90vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
+            cursor: zoom-out;
+        }
+
+        .image-lightbox-close {
+            position: fixed;
+            top: 18px;
+            right: 22px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,.18);
+            background: rgba(15,23,42,.8);
+            color: white;
+            font-size: 26px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .preview-image {
+            cursor: zoom-in;
+        }
+
         #success-banner:not(.hidden) {
             animation: fadeUp 0.4s ease-out forwards;
         }
@@ -203,45 +250,77 @@
     </header>
 
     <main class="relative z-10 max-w-4xl mx-auto px-6 text-center my-auto py-12">
-
-        <!-- Pre-launch notice: product does not exist yet — this is a demand validation page -->
-        <div class="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold px-4 py-2 rounded-full mb-8 animate-start animate-fade-up">
-            <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
-            This product is under development &mdash; sign up below to register your interest
-        </div>
-
-        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-6 animate-start animate-fade-up-delay-1">
+<h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-6 animate-start animate-fade-up-delay-1">
             <span class="headline-gradient"> Stop Chasing Weekly </span>
 <br>
             <span class="text-emerald-400"> Clover® POS Sales Reports </span>
         </h1>
         <p class="text-lg text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed animate-start animate-fade-up-delay-2">
-            A reporting utility being built for Clover&reg; POS merchants &mdash; designed to automatically retrieve your sales data, format it into your preferred columns, and deliver the report (in XLSX, PDF, CSV or IIF format) to your accountant, bookkeeper, or team on a schedule you define, e.g. every Monday at 6 AM.
+            A reporting utility for Clover&reg; POS merchants that automatically retrieves your sales data, formats it into your preferred columns, and delivers the report (in XLSX, PDF, CSV or IIF format) to your accountant, bookkeeper, or team on a schedule you define, e.g. every Monday at 6 AM.
         </p>
 
         <!-- Product Value Pillars -->
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-left max-w-4xl mx-auto mb-12 animate-start animate-fade-up-delay-3">
             <div class="pillar-card p-5 rounded-xl">
                 <h3 class="text-emerald-400 font-bold mb-1">Fully Automated</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">Designed to configure once and run silently. A background scheduler will fetch, format, and email your reports &mdash; daily, weekly, or monthly &mdash; without any manual steps.</p>
+                <p class="text-xs text-slate-400 leading-relaxed">Configure once and let the background scheduler fetch, format, and email your reports &mdash; daily, weekly, or monthly &mdash; without manual steps.</p>
             </div>
             <div class="pillar-card p-5 rounded-xl">
                 <h3 class="text-emerald-400 font-bold mb-2">Custom Ledger Mapping</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">Planned to let you rename any data column to match your accountant's exact template &mdash; with the ability to route different report types to different recipients simultaneously.</p>
+                <p class="text-xs text-slate-400 leading-relaxed">Rename any data column to match your accountant's exact template, with the ability to route different report types to different recipients simultaneously.</p>
             </div>
             <div class="pillar-card p-5 rounded-xl">
                 <h3 class="text-emerald-400 font-bold mb-2">Multi-Format Export</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">Planned output formats: ledger-ready <strong class="text-slate-300">.XLSX</strong>, printable <strong class="text-slate-300">.PDF</strong>, flat <strong class="text-slate-300">.CSV</strong>, and QuickBooks-compatible <strong class="text-slate-300">.IIF</strong>. Clean decimals and readable dates &mdash; no manual cleanup.</p>
+                <p class="text-xs text-slate-400 leading-relaxed">Export ledger-ready <strong class="text-slate-300">.XLSX</strong>, printable <strong class="text-slate-300">.PDF</strong>, flat <strong class="text-slate-300">.CSV</strong>, and QuickBooks-compatible <strong class="text-slate-300">.IIF</strong> files. Clean decimals and readable dates &mdash; no manual cleanup.</p>
             </div>
-            <div class="pillar-card p-5 rounded-xl border border-slate-700/40 opacity-75">
+            <div class="pillar-card p-5 rounded-xl">
                 <div class="flex items-center gap-2 mb-1">
-                    <h3 class="text-slate-400 font-bold">QuickBooks Live Sync</h3>
+                    <h3 class="text-slate-400 font-bold">QuickBooks/Xero Live Sync</h3>
                     <span class="text-[10px] font-bold tracking-wider bg-slate-700/60 text-slate-400 border border-slate-600/40 px-2 py-0.5 rounded-full uppercase">Coming Later</span>
                 </div>
-                <p class="text-xs text-slate-500 leading-relaxed">A planned Pro tier feature. Push every Clover sale directly into QuickBooks Online in real time — no email, no manual import. Available in a future release after beta.</p>
+                <p class="text-xs text-slate-500 leading-relaxed">Push every Clover sale directly into QuickBooks/Xero Online in real time — no email, no manual import.</p>
             </div>
         </div>
 
+
+
+<!-- Product Preview -->
+<section class="max-w-4xl mx-auto mb-12 animate-start animate-fade-up-delay-3" aria-labelledby="preview-heading">
+    <div class="text-center mb-5">
+        <h2 id="preview-heading" class="text-2xl md:text-3xl font-extrabold tracking-tight">
+            See what your reporting workflow looks like
+        </h2>
+        <p class="text-sm text-slate-400 mt-2">
+            Dashboard visibility, scheduled delivery, and an accountant-ready spreadsheet — in one workflow.
+        </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-4 text-left">
+        <figure class="pillar-card rounded-xl overflow-hidden">
+            <img src="assets/dashboard.png" alt="Sales dashboard showing sales trends, customer sales, purchases, expenses and net profit" class="w-full block preview-image" onclick="openImageLightbox(this.src, this.alt)" style="cursor: zoom-in;">
+            <figcaption class="p-3">
+                <div class="text-sm font-bold text-slate-200">Dashboard</div>
+                <div class="text-xs text-slate-500 mt-1">See sales, profit, purchases and expenses at a glance.</div>
+            </figcaption>
+        </figure>
+
+        <figure class="pillar-card rounded-xl overflow-hidden">
+            <img src="assets/email.png" alt="Scheduled sales summary email" class="w-full block preview-image" onclick="openImageLightbox(this.src, this.alt)" style="cursor: zoom-in;">
+            <figcaption class="p-3">
+                <div class="text-sm font-bold text-slate-200">Scheduled delivery</div>
+                <div class="text-xs text-slate-500 mt-1">Your sales summary arrives by email on your schedule.</div>
+            </figcaption>
+        </figure>
+
+        <figure class="pillar-card rounded-xl overflow-hidden">
+            <img src="assets/sample_report.png" alt="Sales summary spreadsheet with transaction details" class="w-full block preview-image" onclick="openImageLightbox(this.src, this.alt)" style="cursor: zoom-in;">
+            <figcaption class="p-3">
+                <div class="text-sm font-bold text-slate-200">Excel report</div>
+                <div class="text-xs text-slate-500 mt-1">Structured transaction details ready for review.</div>
+            </figcaption>
+        </figure>
+    </div>
+</section>
 
 <!-- Security Section -->
 <div class="max-w-2xl mx-auto mb-10 text-center">
@@ -279,34 +358,22 @@
                 <div>
                     <label class="block text-sm font-medium text-slate-300 text-left mb-2">Accountant or Store Owner Email Address</label>
                     <input type="email" id="target-email" required class="input-glow w-full px-4 py-3 bg-slate-900/80 border border-slate-600/80 rounded-lg focus:outline-none focus:border-emerald-400 text-white placeholder-slate-500 transition-all duration-200" placeholder="name@accounting-firm.com">
-<p class="text-xs text-slate-500 mt-2 text-left">
-    We'll only use your email for beta updates.
+<p class="text-xs text-slate-500 mt-2 text-center">
+    We'll email you when your beta access is ready. No spam. Unsubscribe anytime.
     No spam. Unsubscribe anytime.
 </p>
                 </div>
-<div>
-    <label class="block text-sm font-medium text-slate-300 text-left mb-2">
-        Special concerns or feature requests
-        <span class="text-slate-500 font-normal">(optional)</span>
-    </label>
-    <textarea
-        id="feature-requests"
-        rows="4"
-        maxlength="1000"
-        class="input-glow w-full px-4 py-3 bg-slate-900/80 border border-slate-600/80 rounded-lg focus:outline-none focus:border-emerald-400 text-white placeholder-slate-500 transition-all duration-200 resize-y min-h-[96px]"
-        placeholder="e.g. Custom report requirements, or other requests..."
-    ></textarea>
-</div>
-<p class="text-xs text-slate-500 mt-2">
+<p class="text-xs text-slate-500 mt-2 text-center">
   By submitting, you agree to our <a href="privacy.html" class="underline text-slate-400 hover:text-white">Privacy Policy</a> and <a href="terms.html" class="underline">Terms of Service</a>.
 </p>
+                <p class="text-xs text-slate-400 text-left -mb-1 text-center">What happens next: we’ll email you with beta access details when your spot is ready.</p>
                 <button type="submit" id="action-btn" class="btn-shine w-full py-3 bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-slate-950 font-bold rounded-lg transition dynamic-colors shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed">
-                    Join the Beta Waitlist
+                    Get Early Beta Access
                 </button>
             </form>
             <div id="success-banner" class="hidden text-emerald-400 font-medium text-sm mt-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20"></div>
 <p class="text-xs text-slate-500 mt-3">
-    No credit card required. Early beta users will receive free access during testing and product updates.
+    No credit card required. Early beta users receive free access during testing and product updates.
 </p>
         </div>
     </main>
@@ -327,13 +394,57 @@
     Contact: trytallytrigger@yahoo.com
 </p>
 </footer>
+<!-- Image Lightbox -->
+<div id="image-lightbox"
+     style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,.9); align-items:center; justify-content:center; padding:20px;"
+     onclick="closeImageLightbox()">
 
+    <button type="button"
+            onclick="closeImageLightbox(event)"
+            style="position:absolute; top:20px; right:25px; width:44px; height:44px; border:0; border-radius:50%; background:rgba(255,255,255,.15); color:white; font-size:28px; cursor:pointer;">
+        &times;
+    </button>
+
+    <img id="image-lightbox-image"
+         src=""
+         alt=""
+         style="max-width:95vw; max-height:90vh; object-fit:contain; border-radius:12px; box-shadow:0 20px 80px rgba(0,0,0,.6);"
+         onclick="event.stopPropagation()">
+</div>
     <script>
+        function openImageLightbox(src, alt) {
+        const lightbox = document.getElementById('image-lightbox');
+        const image = document.getElementById('image-lightbox-image');
+
+        image.src = src;
+        image.alt = alt;
+
+        lightbox.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeImageLightbox(event) {
+        if (event) {
+            event.stopPropagation();
+        }
+
+        const lightbox = document.getElementById('image-lightbox');
+        const image = document.getElementById('image-lightbox-image');
+
+        lightbox.style.display = 'none';
+        image.src = '';
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeImageLightbox();
+        }
+    });
         document.getElementById('smoke-test-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const emailValue = document.getElementById('target-email').value;
-            const featureRequests = document.getElementById('feature-requests').value.trim();
-
+            
             const actionBtn = document.getElementById('action-btn');
             const successBanner = document.getElementById('success-banner');
 
@@ -344,7 +455,7 @@
                 const response = await fetch('/api/signup', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: emailValue, featureRequests: featureRequests || null })
+                    body: JSON.stringify({ email: emailValue })
                 });
                 const payload = await response.json();
                 
@@ -359,7 +470,7 @@
                 alert("Something went wrong. Please try again.");
             } finally {
                 actionBtn.disabled = false;
-                actionBtn.innerText = "Join the Beta Waitlist";
+                actionBtn.innerText = "Get Early Beta Access";
             }
         });
     </script>
