@@ -70,7 +70,7 @@ export default async function handler(req, res) {
                     client_ip_address: ipAddress, // Helps Meta match the profile
                     client_user_agent: userAgent  // Helps Meta match the profile
                 },
-                }],test_event_code: "TEST36867",
+                }],
             }),
             });
         } catch (metaError) {
