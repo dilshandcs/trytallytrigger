@@ -49,12 +49,41 @@ export default async function handler(req, res) {
         });
 
         const hashedEmail = crypto.createHash('sha256').update(email.trim().toLowerCase()).digest('hex');
-        let ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-        if (ipAddress && ipAddress.includes(',')) {
-            ipAddress = ipAddress.split(',')[0].trim(); // Fixed splitting array bug
-        }
+
+        // 1. Safely extract IP handling both String and Array headers
+let rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+
+if (Array.isArray(rawIp)) {
+    rawIp = rawIp[0];
+} else if (typeof rawIp === 'string' && rawIp.includes(',')) {
+    rawIp = rawIp.split(',')[0];
+}
+
+let ipAddress = typeof rawIp === 'string' ? rawIp.trim() : '';
+
+// 2. Clean IPv6-mapped IPv4 prefixes (e.g. "::ffff:192.168.1.1" -> "192.168.1.1")
+if (ipAddress.startsWith('::ffff:')) {
+    ipAddress = ipAddress.replace('::ffff:', '');
+}
+
+// 3. Prevent sending Localhost / Loopback IPs to Meta CAPI
+if (ipAddress === '::1' || ipAddress === '127.0.0.1' || ipAddress === 'localhost') {
+    ipAddress = null; // Do not send invalid local IP to Meta
+}
+
         const userAgent = req.headers['user-agent'];
         const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+
+
+        const userData = {
+            em: [hashedEmail],
+            client_user_agent: userAgent,
+        };
+        
+        // Only attach client_ip_address if it's a valid public IP
+        if (ipAddress) {
+            userData.client_ip_address = ipAddress;
+        }
 
         try {
         await fetch(`https://graph.facebook.com/v21.0/${pixelId}/events?access_token=${process.env.META_CAPI_TOKEN}`, {            method: 'POST',
@@ -65,11 +94,7 @@ export default async function handler(req, res) {
                 event_time: Math.floor(Date.now() / 1000),
                 event_id: eventId,             // Must match front-end exactly
                 action_source: 'website',
-                user_data: { 
-                    em: [hashedEmail],
-                    client_ip_address: ipAddress, // Helps Meta match the profile
-                    client_user_agent: userAgent  // Helps Meta match the profile
-                },
+                user_data,
                 }],
             }),
             });
