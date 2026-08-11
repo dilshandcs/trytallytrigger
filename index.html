@@ -477,6 +477,7 @@
     });
         document.getElementById('smoke-test-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            const uniqueEventId = 'lead_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
             const planError = document.getElementById('plan-error');
             const selectedPlanInput = document.querySelector('input[name="cloverPlan"]:checked');
@@ -495,6 +496,9 @@
                 alert('Please enter a valid email address.');
                 return;
             }
+
+            fbq('track', 'Lead', {content_category: 'Sign Up Form'}, { eventID: uniqueEventId });
+
             const actionBtn = document.getElementById('action-btn');
             const successBanner = document.getElementById('success-banner');
 
@@ -510,8 +514,6 @@
                 const payload = await response.json();
                 
                 if (response.ok) {
-                    const uniqueEventId = 'lead_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                    fbq('track', 'Lead', {content_category: 'Sign Up Form'}, { eventID: uniqueEventId });
 
                     document.getElementById('smoke-test-form').reset();
                     successBanner.innerText = payload.message;
