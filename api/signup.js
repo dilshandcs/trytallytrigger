@@ -13,7 +13,7 @@ export default async function handler(req, res) {
         const { email, cloverPlan, featureRequests, eventId } = req.body;
 
         const ALLOWED_PLANS = ['Register Lite/Essentials', 'Register'];
-
+        console.log("cloverPlan:", cloverPlan);
         if (!cloverPlan || !ALLOWED_PLANS.includes(cloverPlan)) {
             return res.status(400).json({
                 error: "Please select a valid, compatible Clover plan (Register Lite/Essentials or Register)."
