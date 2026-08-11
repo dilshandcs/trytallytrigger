@@ -377,6 +377,26 @@
     No spam. Unsubscribe anytime.
 </p>
                 </div>
+            <div class="text-left space-y-2 pt-2">
+                <label class="block text-sm font-medium text-slate-300">
+                    What Clover plan do you use? <span class="text-emerald-400">*</span>
+                </label>
+                <div class="space-y-2 bg-slate-900/50 p-3 rounded-lg border border-slate-700/60">
+                    <label class="flex items-center space-x-3 text-slate-500 opacity-60 cursor-not-allowed">
+                        <input type="radio" name="cloverPlan" value="Payment Plus (Not Compatible)" disabled class="text-emerald-500 focus:ring-0 focus:ring-offset-0 bg-slate-900 border-slate-700 cursor-not-allowed">
+                        <span class="text-sm">Payment Plus <span class="text-xs text-amber-500/80 font-medium">(Not Compatible)</span></span>
+                    </label>
+                    <label class="flex items-center space-x-3 text-slate-200 cursor-pointer hover:text-white">
+                        <input type="radio" name="cloverPlan" value="Register Lite/Essentials" required class="text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0 bg-slate-900 border-slate-600 cursor-pointer">
+                        <span class="text-sm">Register Lite / Essentials</span>
+                    </label>
+                    <label class="flex items-center space-x-3 text-slate-200 cursor-pointer hover:text-white">
+                        <input type="radio" name="cloverPlan" value="Register" required class="text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0 bg-slate-900 border-slate-600 cursor-pointer">
+                        <span class="text-sm">Register</span>
+                    </label>
+                </div>
+                <p id="plan-error" class="hidden text-xs text-red-400 mt-1">Please select a compatible Clover plan to continue.</p>
+            </div>
 <p class="text-xs text-slate-500 mt-2 text-center">
   By submitting, you agree to our <a href="privacy.html" class="underline text-slate-400 hover:text-white">Privacy Policy</a> and <a href="terms.html" class="underline">Terms of Service</a>.
 </p>
@@ -457,11 +477,24 @@
     });
         document.getElementById('smoke-test-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const uniqueEventId = 'lead_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-            fbq('track', 'Lead', {content_category: 'Sign Up Form'}, { eventID: uniqueEventId });
+
+            const planError = document.getElementById('plan-error');
+            const selectedPlanInput = document.querySelector('input[name="cloverPlan"]:checked');
+
+            if (!selectedPlanInput || selectedPlanInput.disabled) {
+                planError.classList.remove('hidden');
+                return;
+            } else {
+                planError.classList.add('hidden');
+            }
+
+            const cloverPlanValue = selectedPlanInput.value;
 
             const emailValue = document.getElementById('target-email').value;
-            
+            if (!emailValue || !emailValue.includes('@')) {
+                alert('Please enter a valid email address.');
+                return;
+            }
             const actionBtn = document.getElementById('action-btn');
             const successBanner = document.getElementById('success-banner');
 
@@ -472,11 +505,14 @@
                 const response = await fetch('/api/signup', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: emailValue, eventId: uniqueEventId })
+                    body: JSON.stringify({ email: emailValue, cloverPlan: cloverPlanValue, eventId: uniqueEventId })
                 });
                 const payload = await response.json();
                 
                 if (response.ok) {
+                    const uniqueEventId = 'lead_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    fbq('track', 'Lead', {content_category: 'Sign Up Form', cloverPlan: cloverPlanValue}, { eventID: uniqueEventId });
+
                     document.getElementById('smoke-test-form').reset();
                     successBanner.innerText = payload.message;
                     successBanner.classList.remove('hidden');

@@ -10,7 +10,15 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { email, featureRequests, eventId } = req.body;
+        const { email, cloverPlan, featureRequests, eventId } = req.body;
+
+        const ALLOWED_PLANS = ['Register Lite/Essentials', 'Register'];
+
+        if (!cloverPlan || !ALLOWED_PLANS.includes(cloverPlan)) {
+            return res.status(400).json({
+                error: "Please select a valid, compatible Clover plan (Register Lite/Essentials or Register)."
+            });
+        }
 
         if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
             return res.status(400).json({
@@ -34,7 +42,7 @@ export default async function handler(req, res) {
             html: `
                 <h2>New early-access signup</h2>
                 <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Feature requests:</strong></p>
+                <p><strong>Clover Plan:</strong> ${cloverPlan}</p>
                 <p>${concerns ? concerns.replace(/\n/g, '<br>') : '<em>(none)</em>'}</p>
                 <p><small>${new Date().toISOString()}</small></p>
             `,
