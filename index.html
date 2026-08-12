@@ -266,17 +266,66 @@
 
     </header>
 
-    <main class="relative z-10 max-w-4xl mx-auto px-6 text-center my-auto py-12">
+    <main class="relative z-10 max-w-4xl mx-auto px-6 text-center my-auto">
 <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-6 animate-start animate-fade-up-delay-1">
-            <span class="headline-gradient"> Stop Chasing Weekly </span>
+            <span class="headline-gradient"> Automate Your Clover Reports.  </span>
 <br>
-            <span class="text-emerald-400"> Clover® POS Sales Reports </span>
+            <span class="text-emerald-400"> Stop Sending Them Manually. </span>
         </h1>
         <p class="text-lg text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed animate-start animate-fade-up-delay-2">
-            A reporting utility for Clover&reg; POS merchants that automatically retrieves your sales data, formats it into your preferred columns, and delivers the report (in XLSX, PDF, CSV or IIF format) to your accountant, bookkeeper, or team on a schedule you define, e.g. every Monday at 6 AM.
+            Automatically retrieve your Clover&reg; POS sales data, format it the way you need, and send reports to your accountant or team on any schedule. Export to XLSX, CSV, PDF, or IIF, or sync your data with QuickBooks and Xero.
         </p>
 
-        <!-- Product Value Pillars -->
+                <!-- Email Capture Interface Component -->
+                <fieldset class="form-card p-8 rounded-2xl max-w-md mb-10 mx-auto animate-start animate-fade-up-delay-4">
+                    <legend class="mx-auto px-4 text-sm font-semibold text-slate-200">
+                        Join Here to Get
+                        <span class="text-emerald-400 font-bold">Free</span>
+                        Beta Access
+                    </legend>
+                    <form id="smoke-test-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-300 text-left mb-2">Accountant or Store Owner Email Address</label>
+                            <input type="email" id="target-email" required class="input-glow w-full px-4 py-3 bg-slate-900/80 border border-slate-600/80 rounded-lg focus:outline-none focus:border-emerald-400 text-white placeholder-slate-500 transition-all duration-200" placeholder="name@accounting-firm.com">
+                        </div>
+                    <div class="text-left space-y-2 pt-2">
+                        <label class="block text-sm font-medium text-slate-300">
+                            What Clover Plan Do You Use? <span class="text-emerald-400">*</span>
+                        </label>
+                        <div class="space-y-2 bg-slate-900/50 p-3 rounded-lg border border-slate-700/60">
+                            <label class="flex items-center space-x-3 text-slate-500 opacity-60 cursor-not-allowed">
+                                <input type="radio" name="cloverPlan" value="Payment Plus (Not Compatible)" disabled class="text-emerald-500 focus:ring-0 focus:ring-offset-0 bg-slate-900 border-slate-700 cursor-not-allowed">
+                                <span class="text-sm">Payment Plus <span class="text-xs text-amber-500/80 font-medium">(Not Compatible)</span></span>
+                            </label>
+                            <label class="flex items-center space-x-3 text-slate-200 cursor-pointer hover:text-white">
+                                <input type="radio" name="cloverPlan" value="Register Lite/Essentials" required class="text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0 bg-slate-900 border-slate-600 cursor-pointer">
+                                <span class="text-sm">Register Lite / Essentials</span>
+                            </label>
+                            <label class="flex items-center space-x-3 text-slate-200 cursor-pointer hover:text-white">
+                                <input type="radio" name="cloverPlan" value="Register" required class="text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0 bg-slate-900 border-slate-600 cursor-pointer">
+                                <span class="text-sm">Register</span>
+                            </label>
+                        </div>
+                        <p id="plan-error" class="hidden text-xs text-red-400 mt-1">Please select a compatible Clover plan to continue.</p>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-2 text-center">
+                        We'll email you when your beta access is ready. No spam. Unsubscribe anytime.
+                    </p>
+        <p class="text-xs text-slate-500 mt-2 text-center">
+          By submitting, you agree to our <a href="privacy.html" class="underline text-slate-400 hover:text-white">Privacy Policy</a> and <a href="terms.html" class="underline">Terms of Service</a>.
+        </p>
+                        <button type="submit" id="action-btn" class="btn-shine w-full py-3 bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-slate-950 font-bold rounded-lg transition dynamic-colors shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed">
+                            Get Free Beta Access
+                        </button>
+                    </form>
+                    <div id="success-banner" class="hidden text-emerald-400 font-medium text-sm mt-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20"></div>
+        <p class="text-xs text-slate-500 mt-3">
+            No credit card required. Early beta users receive free access during testing and product updates.
+        </p>
+                </fieldset>
+                
+       
+                <!-- Product Value Pillars -->
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-left max-w-4xl mx-auto mb-12 animate-start animate-fade-up-delay-3">
             <div class="pillar-card p-5 rounded-xl">
                 <h3 class="text-emerald-400 font-bold mb-1">Fully Automated</h3>
@@ -357,7 +406,7 @@
     Our goal is to handle your data minimally and responsibly — processing reports without permanently storing raw transaction data. See our <a href="privacy.html" class="underline text-slate-400 hover:text-white">Privacy Policy</a> for full details.
 </p></div>
 <!-- Compatibility Notice -->
-<div class="max-w-2xl mx-auto mb-10 text-center">
+<div class="max-w-2xl mx-auto text-center">
     <p class="text-xs text-slate-500 leading-relaxed">
         Designed for supported Clover® POS merchant accounts using Clover APIs.
         TallyTrigger is an independent application and is not affiliated with or endorsed by Clover Network, LLC or Fiserv, Inc.
@@ -366,50 +415,7 @@
 
 
 
-        <!-- Email Capture Interface Component -->
-        <div class="form-card p-8 rounded-2xl max-w-md mx-auto animate-start animate-fade-up-delay-4">
-            <form id="smoke-test-form" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-slate-300 text-left mb-2">Accountant or Store Owner Email Address</label>
-                    <input type="email" id="target-email" required class="input-glow w-full px-4 py-3 bg-slate-900/80 border border-slate-600/80 rounded-lg focus:outline-none focus:border-emerald-400 text-white placeholder-slate-500 transition-all duration-200" placeholder="name@accounting-firm.com">
-                </div>
-            <div class="text-left space-y-2 pt-2">
-                <label class="block text-sm font-medium text-slate-300">
-                    What Clover Plan Do You Use? <span class="text-emerald-400">*</span>
-                </label>
-                <div class="space-y-2 bg-slate-900/50 p-3 rounded-lg border border-slate-700/60">
-                    <label class="flex items-center space-x-3 text-slate-500 opacity-60 cursor-not-allowed">
-                        <input type="radio" name="cloverPlan" value="Payment Plus (Not Compatible)" disabled class="text-emerald-500 focus:ring-0 focus:ring-offset-0 bg-slate-900 border-slate-700 cursor-not-allowed">
-                        <span class="text-sm">Payment Plus <span class="text-xs text-amber-500/80 font-medium">(Not Compatible)</span></span>
-                    </label>
-                    <label class="flex items-center space-x-3 text-slate-200 cursor-pointer hover:text-white">
-                        <input type="radio" name="cloverPlan" value="Register Lite/Essentials" required class="text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0 bg-slate-900 border-slate-600 cursor-pointer">
-                        <span class="text-sm">Register Lite / Essentials</span>
-                    </label>
-                    <label class="flex items-center space-x-3 text-slate-200 cursor-pointer hover:text-white">
-                        <input type="radio" name="cloverPlan" value="Register" required class="text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0 bg-slate-900 border-slate-600 cursor-pointer">
-                        <span class="text-sm">Register</span>
-                    </label>
-                </div>
-                <p id="plan-error" class="hidden text-xs text-red-400 mt-1">Please select a compatible Clover plan to continue.</p>
-            </div>
-            <p class="text-xs text-slate-500 mt-2 text-center">
-                We'll email you when your beta access is ready. No spam. Unsubscribe anytime.
-                No spam. Unsubscribe anytime.
-            </p>
-<p class="text-xs text-slate-500 mt-2 text-center">
-  By submitting, you agree to our <a href="privacy.html" class="underline text-slate-400 hover:text-white">Privacy Policy</a> and <a href="terms.html" class="underline">Terms of Service</a>.
-</p>
-                <p class="text-xs text-slate-400 text-left -mb-1 text-center">What happens next: we’ll email you with beta access details when your spot is ready.</p>
-                <button type="submit" id="action-btn" class="btn-shine w-full py-3 bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-slate-950 font-bold rounded-lg transition dynamic-colors shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed">
-                    Get Early Beta Access
-                </button>
-            </form>
-            <div id="success-banner" class="hidden text-emerald-400 font-medium text-sm mt-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20"></div>
-<p class="text-xs text-slate-500 mt-3">
-    No credit card required. Early beta users receive free access during testing and product updates.
-</p>
-        </div>
+
     </main>
 
 <footer class="relative z-10 p-6 text-center text-xs text-slate-500 border-t border-slate-800/60 space-y-2">
@@ -526,7 +532,7 @@
                 alert("Error: " + err.message);
             } finally {
                 actionBtn.disabled = false;
-                actionBtn.innerText = "Get Early Beta Access";
+                actionBtn.innerText = "Get Free Beta Access";
             }
         });
     </script>
