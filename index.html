@@ -1034,8 +1034,18 @@
         let payload = {};
 
         try {
-          payload = await response.json();
-        } catch (_) {}
+            payload = await response.json();
+            } catch (error) {
+            console.error(
+                '[SIGNUP_INVALID_JSON]',
+                response.status,
+                error
+            );
+
+            throw new Error(
+                `Signup API returned an invalid response (${response.status}).`
+            );
+            }
 
         if (!response.ok) {
           throw new Error(
@@ -1044,6 +1054,18 @@
           );
         }
 
+        leadToken = payload.leadToken || '';
+
+            console.log(
+            '[SIGNUP] lead token received:',
+            Boolean(leadToken)
+            );
+
+            if (!leadToken) {
+            throw new Error(
+                'Signup succeeded, but no lead token was returned.'
+            );
+            }
 
 
         /*
