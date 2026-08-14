@@ -1,20 +1,56 @@
 import { Resend } from 'resend';
-import crypto from 'crypto'
+import crypto from 'crypto';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+function createLeadToken(email) {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const payload = {
+        email: normalizedEmail,
+        createdAt: Date.now()
+    };
+
+    const encodedPayload = Buffer
+        .from(JSON.stringify(payload))
+        .toString('base64url');
+
+    const signature = crypto
+        .createHmac('sha256', process.env.LEAD_TOKEN_SECRET)
+        .update(encodedPayload)
+        .digest('base64url');
+
+    return `${encodedPayload}.${signature}`;
+}
+
 export default async function handler(req, res) {
+
     if (req.method !== 'POST') {
         res.setHeader('Allow', ['POST']);
-        return res.status(405).json({ error: `HTTP Method ${req.method} Not Permitted.` });
+
+        return res.status(405).json({
+            error: `HTTP Method ${req.method} Not Permitted.`
+        });
     }
 
     try {
-        const { email, featureRequests, eventId } = req.body;
+        const {
+            email,
+            featureRequests,
+            eventId
+        } = req.body || {};
 
-        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        const normalizedEmail =
+            typeof email === 'string'
+                ? email.trim().toLowerCase()
+                : '';
+
+        if (
+            !normalizedEmail ||
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)
+        ) {
             return res.status(400).json({
-                error: "Invalid parameters: A verified email address string is required."
+                error: 'A valid email address is required.'
             });
         }
 
@@ -23,84 +59,191 @@ export default async function handler(req, res) {
                 ? featureRequests.trim().slice(0, 1000)
                 : '';
 
-        // Still log for debugging (optional)
-        console.info(`[LEAD] ${email}${concerns ? ` | ${concerns}` : ''}`);
+        console.info(
+            `[LEAD] ${normalizedEmail}${
+                concerns ? ` | ${concerns}` : ''
+            }`
+        );
 
-        // Email yourself
+        /*
+         * Lead notification.
+         */
         await resend.emails.send({
-            from: 'CloverExtract <onboarding@resend.dev>', // use your verified domain in production
+            from: 'TallyTrigger <onboarding@resend.dev>',
             to: process.env.LEAD_NOTIFY_EMAIL,
-            subject: `New signup: ${email}`,
+            subject: `New TallyTrigger beta signup: ${normalizedEmail}`,
             html: `
-                <h2>New early-access signup</h2>
-                <p><strong>Email:</strong> ${email}</p>
-                <p><small>${new Date().toISOString()}</small></p>
-            `,
+                <h2>New private-beta signup</h2>
+
+                <p>
+                    <strong>Email:</strong>
+                    ${escapeHtml(normalizedEmail)}
+                </p>
+
+                ${
+                    concerns
+                        ? `
+                        <p>
+                            <strong>Feature notes:</strong><br>
+                            ${escapeHtml(concerns)}
+                        </p>
+                        `
+                        : ''
+                }
+
+                <p>
+                    <small>${new Date().toISOString()}</small>
+                </p>
+            `
         });
 
-        const hashedEmail = crypto.createHash('sha256').update(email.trim().toLowerCase()).digest('hex');
+        /*
+         * Meta CAPI
+         */
 
-        // 1. Safely extract IP handling both String and Array headers
-let rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '';
+        const hashedEmail = crypto
+            .createHash('sha256')
+            .update(normalizedEmail)
+            .digest('hex');
 
-if (Array.isArray(rawIp)) {
-    rawIp = rawIp[0];
-} else if (typeof rawIp === 'string' && rawIp.includes(',')) {
-    rawIp = rawIp.split(',')[0];
-}
+        let rawIp =
+            req.headers['x-forwarded-for'] ||
+            req.socket?.remoteAddress ||
+            '';
 
-let ipAddress = typeof rawIp === 'string' ? rawIp.trim() : '';
+        if (Array.isArray(rawIp)) {
+            rawIp = rawIp[0];
+        } else if (
+            typeof rawIp === 'string' &&
+            rawIp.includes(',')
+        ) {
+            rawIp = rawIp.split(',')[0];
+        }
 
-// 2. Clean IPv6-mapped IPv4 prefixes (e.g. "::ffff:192.168.1.1" -> "192.168.1.1")
-if (ipAddress.startsWith('::ffff:')) {
-    ipAddress = ipAddress.replace('::ffff:', '');
-}
+        let ipAddress =
+            typeof rawIp === 'string'
+                ? rawIp.trim()
+                : '';
 
-// 3. Prevent sending Localhost / Loopback IPs to Meta CAPI
-if (ipAddress === '::1' || ipAddress === '127.0.0.1' || ipAddress === 'localhost') {
-    ipAddress = null; // Do not send invalid local IP to Meta
-}
+        if (ipAddress.startsWith('::ffff:')) {
+            ipAddress = ipAddress.replace('::ffff:', '');
+        }
 
-        const userAgent = req.headers['user-agent'];
-        const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+        if (
+            ipAddress === '::1' ||
+            ipAddress === '127.0.0.1' ||
+            ipAddress === 'localhost'
+        ) {
+            ipAddress = null;
+        }
 
+        const userAgent =
+            typeof req.headers['user-agent'] === 'string'
+                ? req.headers['user-agent']
+                : undefined;
+
+        const pixelId =
+            process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
         const userData = {
-            em: [hashedEmail],
-            client_user_agent: userAgent,
+            em: [hashedEmail]
         };
-        
-        // Only attach client_ip_address if it's a valid public IP
+
+        if (userAgent) {
+            userData.client_user_agent = userAgent;
+        }
+
         if (ipAddress) {
             userData.client_ip_address = ipAddress;
         }
 
-        try {
-        await fetch(`https://graph.facebook.com/v21.0/${pixelId}/events?access_token=${process.env.META_CAPI_TOKEN}`, {            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                data: [{
-                event_name: 'Lead',
-                event_time: Math.floor(Date.now() / 1000),
-                event_id: eventId,             // Must match front-end exactly
-                action_source: 'website',
-                user_data,
-                }],
-            }),
-            });
-        } catch (metaError) {
-            console.error("[META_CAPI_ERROR]", metaError);
+        /*
+         * eventId is important for browser/CAPI deduplication.
+         * Only send CAPI if we actually received one.
+         */
+        if (
+            pixelId &&
+            process.env.META_CAPI_TOKEN &&
+            typeof eventId === 'string' &&
+            eventId.length > 0
+        ) {
+            try {
+                const metaResponse = await fetch(
+                    `https://graph.facebook.com/v21.0/${pixelId}/events?access_token=${encodeURIComponent(
+                        process.env.META_CAPI_TOKEN
+                    )}`,
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            data: [
+                                {
+                                    event_name: 'Lead',
+                                    event_time: Math.floor(
+                                        Date.now() / 1000
+                                    ),
+                                    event_id: eventId,
+                                    action_source: 'website',
+                                    user_data: userData
+                                }
+                            ]
+                        })
+                    }
+                );
+
+                if (!metaResponse.ok) {
+                    const metaBody =
+                        await metaResponse.text();
+
+                    console.error(
+                        '[META_CAPI_ERROR]',
+                        metaResponse.status,
+                        metaBody
+                    );
+                }
+
+            } catch (metaError) {
+                console.error(
+                    '[META_CAPI_EXCEPTION]',
+                    metaError
+                );
+            }
         }
+
+        /*
+         * Return signed token used for optional
+         * post-signup Clover-plan qualification.
+         */
+        const leadToken =
+            createLeadToken(normalizedEmail);
 
         return res.status(200).json({
             success: true,
-            message: concerns
-                ? "Success! Your address and feature notes have been locked into our early-access sandbox test queue."
-                : "Success! Your address has been locked into our early-access sandbox test queue."
+            leadToken,
+            message:
+                'Success! You’re on the TallyTrigger private-beta list.'
         });
 
     } catch (error) {
-        console.error("[CRITICAL_SIGNUP_EXCEPTION]", error);
-        return res.status(500).json({ error: "Internal core server routing failure experienced." });
+        console.error(
+            '[CRITICAL_SIGNUP_EXCEPTION]',
+            error
+        );
+
+        return res.status(500).json({
+            error:
+                'Unable to complete signup right now. Please try again.'
+        });
     }
+}
+
+function escapeHtml(value = '') {
+    return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
 }

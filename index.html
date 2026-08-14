@@ -705,6 +705,20 @@
         border-left: 0;
         border-top: 1px solid rgba(15,23,42,.075);
       }
+
+      .plan-btn:disabled {
+            cursor: default;
+        }
+
+        .plan-btn.plan-disabled {
+            opacity: 0.42;
+        }
+
+        .plan-btn.selected {
+            border-color: rgba(16,185,129,.45);
+            background: rgba(236,253,245,.95);
+            box-shadow: 0 0 0 3px rgba(16,185,129,.10);
+        }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -992,6 +1006,10 @@
       submitBtn.disabled = true;
       submitBtn.textContent = 'Requesting access…';
       capturedEmail = email;
+      let capturedEmail = '';
+        let leadToken = '';
+        let planSubmitted = false;
+
 
       try {
         const eventId =
@@ -1026,6 +1044,10 @@
           );
         }
 
+        capturedEmail = email;
+        leadToken = payload.leadToken || '';
+
+
         /*
           Fire the Meta Lead event only after the signup API confirms success.
         */
@@ -1053,50 +1075,79 @@
     });
 
     document.querySelectorAll('.plan-btn').forEach(function(button) {
+    button.addEventListener('click', async function() {
 
-      button.addEventListener('click', async function() {
+        if (planSubmitted) {
+            return;
+        }
 
         const plan = button.dataset.plan;
+        const note = document.getElementById('plan-note');
+        const allButtons = document.querySelectorAll('.plan-btn');
 
-        document.querySelectorAll('.plan-btn').forEach(function(other) {
-          other.classList.remove('selected');
+        // Immediately stop repeat clicks while the request is running.
+        allButtons.forEach(function(btn) {
+            btn.disabled = true;
         });
 
         button.classList.add('selected');
+        note.textContent = 'Saving your Clover plan…';
 
-        const note = document.getElementById('plan-note');
-
-        if (plan === 'Payments / Payment Plus') {
-          note.textContent =
-            'Thanks. This plan does not provide the order/item access needed for the current beta.';
-        } else {
-          note.textContent =
-            'Thanks — that helps us prioritize beta invitations.';
-        }
-
-        /*
-          Optional qualification endpoint.
-          The main lead has already been captured.
-          Remove this fetch if you do not have /api/signup/qualify.
-        */
         try {
-          await fetch('/api/signup/qualify', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              email: capturedEmail,
-              cloverPlan: plan
-            })
-          });
-        } catch (_) {
-          /* Qualification failure does not affect the captured lead. */
+            const response = await fetch('/api/signup/qualify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    leadToken,
+                    cloverPlan: plan
+                })
+            });
+
+            const payload = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    payload.error ||
+                    'Unable to save your Clover plan.'
+                );
+            }
+
+            planSubmitted = true;
+
+            if (plan === 'Payments / Payment Plus') {
+                note.textContent =
+                    'Thanks. Payment Plus is not supported in the current private beta. We’ll keep you updated if compatibility expands.';
+            } else if (plan === 'Not sure') {
+                note.textContent =
+                    'Thanks. We can confirm your Clover plan with you during beta onboarding.';
+            } else {
+                note.textContent =
+                    'Thanks — your Clover plan has been saved.';
+            }
+
+            // Make selected option visually permanent.
+            allButtons.forEach(function(btn) {
+                if (btn !== button) {
+                    btn.classList.add('plan-disabled');
+                }
+            });
+
+        } catch (error) {
+            // Request failed, so allow them to try again.
+            allButtons.forEach(function(btn) {
+                btn.disabled = false;
+            });
+
+            button.classList.remove('selected');
+
+            note.textContent =
+                error.message ||
+                'Unable to save your Clover plan. Please try again.';
         }
-
-      });
-
     });
+});
   </script>
 </body>
 </html>
