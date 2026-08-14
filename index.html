@@ -980,6 +980,8 @@
     };
 
     let capturedEmail = '';
+        let leadToken = '';
+        let planSubmitted = false;
 
     function showError(message) {
       errorBox.textContent = message;
@@ -1006,9 +1008,7 @@
       submitBtn.disabled = true;
       submitBtn.textContent = 'Requesting access…';
       capturedEmail = email;
-      let capturedEmail = '';
-        let leadToken = '';
-        let planSubmitted = false;
+
 
 
       try {
@@ -1044,8 +1044,6 @@
           );
         }
 
-        capturedEmail = email;
-        leadToken = payload.leadToken || '';
 
 
         /*
