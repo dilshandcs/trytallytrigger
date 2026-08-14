@@ -1,540 +1,1102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TallyTrigger - Automated CSV & PDF Reports for Clover® POS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['DM Sans', 'system-ui', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
-                    },
-                    animation: {
-                        'fade-up': 'fadeUp 0.7s ease-out forwards',
-                        'fade-up-delay-1': 'fadeUp 0.7s ease-out 0.1s forwards',
-                        'fade-up-delay-2': 'fadeUp 0.7s ease-out 0.2s forwards',
-                        'fade-up-delay-3': 'fadeUp 0.7s ease-out 0.3s forwards',
-                        'fade-up-delay-4': 'fadeUp 0.7s ease-out 0.4s forwards',
-                        'pulse-soft': 'pulseSoft 5s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        fadeUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        pulseSoft: {
-                            '0%, 100%': { opacity: '0.35' },
-                            '50%': { opacity: '0.65' },
-                        },
-                    },
-                },
-            },
-        }
-    </script>
-    <script>
-  window.va = window.va || function () {
-    (window.vaq = window.vaq || []).push(arguments);
-  };
-</script>
-<!-- Meta Pixel Code -->
-<script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>TallyTrigger — Free Private Beta for Clover Merchants</title>
+  <meta
+    name="description"
+    content="Stop rebuilding Clover reports for your bookkeeper. Join the free TallyTrigger private beta and get reusable, scheduled bookkeeping-ready report packets."
+  />
+
+  <!-- Meta Pixel -->
+  <script>
     !function(f,b,e,v,n,t,s)
     {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    if(!f._fbq)f.fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
     n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '1024292990505916');
     fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1024292990505916&ev=PageView&noscript=1"
-    /></noscript>
-    <!-- End Meta Pixel Code -->
-<script defer src="/_vercel/insights/script.js"></script>
-    <style>
-        body {
-            background-color: #0a0f14;
-            background-image:
-                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(16, 185, 129, 0.14), transparent),
-                radial-gradient(ellipse 60% 40% at 100% 100%, rgba(16, 185, 129, 0.07), transparent),
-                radial-gradient(ellipse 40% 30% at 0% 80%, rgba(56, 189, 248, 0.04), transparent);
-        }
+  </script>
+  <noscript>
+    <img
+      height="1"
+      width="1"
+      style="display:none"
+      src="https://www.facebook.com/tr?id=1024292990505916&ev=PageView&noscript=1"
+      alt=""
+    />
+  </noscript>
 
-        .grid-bg {
-            background-image:
-                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-            background-size: 48px 48px;
-            mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 10%, transparent 75%);
-        }
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: rgba(255,255,255,.74);
+      --surface-strong: rgba(255,255,255,.90);
+      --surface-soft: rgba(248,250,252,.72);
+      --border: rgba(15,23,42,.08);
+      --border-strong: rgba(15,23,42,.13);
+      --text: #0f172a;
+      --muted: #64748b;
+      --muted-2: #94a3b8;
+      --green: #10b981;
+      --green-dark: #047857;
+      --green-soft: rgba(16,185,129,.10);
+      --green-ring: rgba(16,185,129,.16);
+      --danger: #be123c;
+      --shadow: 0 20px 60px rgba(15,23,42,.08);
+      --shadow-soft: 0 10px 35px rgba(15,23,42,.055);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --max: 1180px;
+    }
 
-        .pillar-card {
-            background: rgba(30, 41, 59, 0.5);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        .pillar-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(16, 185, 129, 0.25);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 40px rgba(16, 185, 129, 0.06);
-        }
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
 
-        .form-card {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            box-shadow:
-                0 0 0 1px rgba(255, 255, 255, 0.04),
-                0 8px 32px rgba(0, 0, 0, 0.4),
-                0 0 80px rgba(16, 185, 129, 0.08);
-        }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 16% 10%, rgba(16,185,129,.08), transparent 28%),
+        radial-gradient(circle at 86% 18%, rgba(59,130,246,.055), transparent 24%),
+        radial-gradient(circle at 50% 88%, rgba(16,185,129,.045), transparent 28%),
+        linear-gradient(180deg, #ffffff 0%, #fbfdfc 46%, #f8fbfa 100%);
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overflow-x: hidden;
+    }
 
-        .input-glow:focus {
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15), 0 0 24px rgba(16, 185, 129, 0.1);
-        }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(15,23,42,.026) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15,23,42,.026) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(circle at 50% 25%, black 0%, transparent 72%);
+      opacity: .45;
+      z-index: 0;
+    }
 
-        .btn-shine {
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.2s ease, background-color 0.2s ease;
-        }
+    a {
+      color: inherit;
+    }
 
-        .btn-shine::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%);
-            transform: translateX(-100%);
-            transition: transform 0.55s ease;
-        }
+    button,
+    input {
+      font: inherit;
+    }
 
-        .btn-shine:hover::after {
-            transform: translateX(100%);
-        }
+    button {
+      cursor: pointer;
+    }
 
-        .btn-shine:active:not(:disabled) {
-            transform: scale(0.98);
-        }
+    .page {
+      position: relative;
+      z-index: 1;
+    }
 
-        .headline-gradient {
-            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 50%, #94a3b8 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+    .container {
+      width: min(calc(100% - 40px), var(--max));
+      margin: 0 auto;
+    }
 
-        .brand-glow {
-            text-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
-        }
+    .glass {
+      background:
+        linear-gradient(
+          145deg,
+          rgba(255,255,255,.94),
+          rgba(255,255,255,.68)
+        );
+      border: 1px solid rgba(255,255,255,.95);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.9) inset,
+        0 0 0 1px rgba(15,23,42,.045),
+        var(--shadow);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+    }
 
-        .animate-start {
-            opacity: 0;
-        }
+    .glass-soft {
+      background: rgba(255,255,255,.62);
+      border: 1px solid rgba(15,23,42,.07);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
 
-        .logo-line-1 {
-            font-size: 1.8rem;
-            line-height: 2rem;
-        }
+    header {
+      padding: 24px 0 0;
+    }
 
-                /* Image popup */
-        .image-lightbox {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            background: rgba(2, 6, 23, 0.88);
-            backdrop-filter: blur(8px);
-        }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
 
-        .image-lightbox.is-open {
-            display: flex;
-        }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
 
-        .image-lightbox img {
-            max-width: 94vw;
-            max-height: 90vh;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-            border-radius: 12px;
-            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.55);
-            cursor: zoom-out;
-        }
+    .brand-mark {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background:
+        linear-gradient(145deg, #34d399 0%, #10b981 55%, #059669 100%);
+      color: #052e22;
+      font-weight: 900;
+      letter-spacing: -.04em;
+      box-shadow:
+        0 10px 28px rgba(16,185,129,.22),
+        0 1px 0 rgba(255,255,255,.55) inset;
+    }
 
-        .image-lightbox-close {
-            position: fixed;
-            top: 18px;
-            right: 22px;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            border: 1px solid rgba(255,255,255,.18);
-            background: rgba(15,23,42,.8);
-            color: white;
-            font-size: 26px;
-            line-height: 1;
-            cursor: pointer;
-        }
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.35);
+      pointer-events: none;
+    }
 
-        .preview-image {
-            cursor: zoom-in;
-        }
+    .brand-name {
+      font-size: 21px;
+      font-weight: 850;
+      line-height: 1;
+      letter-spacing: -.035em;
+    }
 
-        #success-banner:not(.hidden) {
-            animation: fadeUp 0.4s ease-out forwards;
-        }
-    </style>
+    .brand-name span {
+      color: var(--green);
+    }
+
+    .brand-sub {
+      margin-top: 5px;
+      color: var(--muted-2);
+      font-size: 10px;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: .16em;
+    }
+
+    .beta-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .beta-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(16,185,129,.08);
+    }
+
+    .hero {
+      padding: 72px 0 70px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.06fr .94fr;
+      align-items: center;
+      gap: 76px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      color: #475569;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow strong {
+      color: var(--green-dark);
+    }
+
+    .eyebrow-separator {
+      color: #cbd5e1;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 760px;
+      font-size: clamp(48px, 6vw, 76px);
+      line-height: .99;
+      font-weight: 900;
+      letter-spacing: -.055em;
+    }
+
+    .accent {
+      color: var(--green);
+    }
+
+    .hero-copy {
+      margin: 26px 0 0;
+      max-width: 670px;
+      color: #475569;
+      font-size: 20px;
+      line-height: 1.65;
+      letter-spacing: -.015em;
+    }
+
+    .benefits {
+      margin-top: 31px;
+      display: grid;
+      gap: 17px;
+      max-width: 650px;
+    }
+
+    .benefit {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+      color: #475569;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .benefit strong {
+      color: var(--text);
+    }
+
+    .check {
+      flex: 0 0 auto;
+      margin-top: 2px;
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      color: var(--green-dark);
+      background: var(--green-soft);
+      border: 1px solid rgba(16,185,129,.18);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .micro-trust {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      margin-top: 26px;
+      color: var(--muted-2);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .signup-card {
+      position: relative;
+      overflow: hidden;
+      padding: 31px;
+      border-radius: var(--radius-xl);
+    }
+
+    .signup-card::before {
+      content: "";
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      top: -130px;
+      right: -110px;
+      background: rgba(16,185,129,.10);
+      filter: blur(14px);
+      pointer-events: none;
+    }
+
+    .card-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-kicker {
+      margin: 0;
+      color: var(--green-dark);
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: .13em;
+    }
+
+    .signup-card h2 {
+      margin: 9px 0 0;
+      font-size: 31px;
+      line-height: 1.12;
+      letter-spacing: -.035em;
+    }
+
+    .card-copy {
+      margin: 13px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    form {
+      margin-top: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .email-input {
+      width: 100%;
+      min-height: 55px;
+      padding: 0 16px;
+      border-radius: 13px;
+      border: 1px solid rgba(15,23,42,.11);
+      color: var(--text);
+      background: rgba(255,255,255,.86);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,.9) inset,
+        0 6px 18px rgba(15,23,42,.035);
+      transition:
+        border-color .16s ease,
+        box-shadow .16s ease,
+        background .16s ease;
+    }
+
+    .email-input::placeholder {
+      color: #a8b2c1;
+    }
+
+    .email-input:focus {
+      outline: none;
+      border-color: rgba(16,185,129,.65);
+      box-shadow:
+        0 0 0 4px var(--green-ring),
+        0 8px 22px rgba(15,23,42,.05);
+      background: #fff;
+    }
+
+    .submit {
+      width: 100%;
+      min-height: 55px;
+      margin-top: 13px;
+      border: 0;
+      border-radius: 13px;
+      color: #042f23;
+      background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
+      font-weight: 850;
+      box-shadow:
+        0 14px 30px rgba(16,185,129,.20),
+        0 1px 0 rgba(255,255,255,.45) inset;
+      transition:
+        transform .16s ease,
+        filter .16s ease,
+        box-shadow .16s ease;
+    }
+
+    .submit:hover {
+      transform: translateY(-1px);
+      filter: saturate(1.05) brightness(1.02);
+      box-shadow:
+        0 17px 36px rgba(16,185,129,.24),
+        0 1px 0 rgba(255,255,255,.45) inset;
+    }
+
+    .submit:active {
+      transform: translateY(0) scale(.995);
+    }
+
+    .submit:disabled {
+      opacity: .65;
+      cursor: wait;
+      transform: none;
+    }
+
+    .form-error {
+      margin: 9px 0 0;
+      color: var(--danger);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .form-note {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 13px;
+      color: var(--muted-2);
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .legal {
+      margin: 13px 0 0;
+      color: #94a3b8;
+      font-size: 10.5px;
+      line-height: 1.6;
+      text-align: center;
+    }
+
+    .legal a:hover {
+      color: #475569;
+    }
+
+    .compatibility {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(15,23,42,.075);
+      color: var(--muted);
+      font-size: 11.5px;
+      line-height: 1.6;
+    }
+
+    .compatibility strong {
+      color: #475569;
+    }
+
+    .success-card {
+      margin-top: 24px;
+      padding: 19px;
+      border-radius: 16px;
+      border: 1px solid rgba(16,185,129,.16);
+      background: rgba(236,253,245,.78);
+    }
+
+    .success-icon {
+      font-size: 22px;
+      color: var(--green-dark);
+    }
+
+    .success-card h3 {
+      margin: 8px 0 0;
+      font-size: 20px;
+      letter-spacing: -.025em;
+    }
+
+    .success-card p {
+      margin: 7px 0 0;
+      color: #536273;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .qualification {
+      margin-top: 18px;
+    }
+
+    .qualification-title {
+      margin: 0;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .plan-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .plan-btn {
+      min-height: 45px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(15,23,42,.08);
+      background: rgba(255,255,255,.72);
+      color: #475569;
+      text-align: left;
+      font-size: 12.5px;
+      transition:
+        border-color .15s ease,
+        background .15s ease,
+        transform .15s ease;
+    }
+
+    .plan-btn:hover {
+      border-color: rgba(16,185,129,.28);
+      background: rgba(255,255,255,.96);
+      transform: translateY(-1px);
+    }
+
+    .plan-btn.selected {
+      border-color: rgba(16,185,129,.38);
+      background: rgba(236,253,245,.82);
+      box-shadow: 0 0 0 3px rgba(16,185,129,.09);
+    }
+
+    .plan-note {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .value-strip {
+      padding: 0 0 72px;
+    }
+
+    .value-panel {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-radius: 22px;
+      overflow: hidden;
+    }
+
+    .value-item {
+      padding: 23px 24px;
+      min-height: 130px;
+    }
+
+    .value-item + .value-item {
+      border-left: 1px solid rgba(15,23,42,.075);
+    }
+
+    .value-title {
+      margin: 0;
+      color: #1e293b;
+      font-size: 14px;
+      font-weight: 850;
+    }
+
+    .value-copy {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    footer {
+      padding: 0 0 31px;
+    }
+
+    .footer-copy {
+      max-width: 750px;
+      margin: 0 auto;
+      color: #94a3b8;
+      font-size: 10.5px;
+      line-height: 1.65;
+      text-align: center;
+    }
+
+    .footer-copy p {
+      margin: 3px 0;
+    }
+
+    @media (max-width: 960px) {
+      .hero {
+        padding-top: 55px;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 42px;
+      }
+
+      .signup-card {
+        max-width: 660px;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        width: min(calc(100% - 28px), var(--max));
+      }
+
+      header {
+        padding-top: 17px;
+      }
+
+      .beta-pill {
+        display: none;
+      }
+
+      .hero {
+        padding: 42px 0 45px;
+      }
+
+      .hero-grid {
+        gap: 34px;
+      }
+
+      h1 {
+        font-size: clamp(43px, 13vw, 62px);
+        line-height: 1;
+      }
+
+      .hero-copy {
+        margin-top: 21px;
+        font-size: 17px;
+        line-height: 1.62;
+      }
+
+      .benefits {
+        margin-top: 25px;
+        gap: 14px;
+      }
+
+      .benefit {
+        font-size: 14px;
+      }
+
+      .signup-card {
+        padding: 23px 19px;
+        border-radius: 22px;
+      }
+
+      .signup-card h2 {
+        font-size: 27px;
+      }
+
+      .value-strip {
+        padding-bottom: 52px;
+      }
+
+      .value-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .value-item {
+        min-height: auto;
+      }
+
+      .value-item + .value-item {
+        border-left: 0;
+        border-top: 1px solid rgba(15,23,42,.075);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
 </head>
-<body class="text-white font-sans antialiased min-h-screen flex flex-col justify-between relative overflow-x-hidden">
 
-    <!-- Ambient background -->
-    <div class="grid-bg fixed inset-0 pointer-events-none" aria-hidden="true"></div>
-    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-emerald-500/8 blur-3xl animate-pulse-soft pointer-events-none" aria-hidden="true"></div>
+<body>
+  <div class="page">
 
-<header class="relative z-10 p-6 max-w-7xl mx-auto w-full animate-start animate-fade-up flex justify-between items-center">
-    
-    <!-- TallyTrigger TEXT LOGO -->
-     <a href="index.html" class="inline-flex items-center gap-3 font-sans select-none group">
-  <!-- Icon Block: Uses 'TT' layout for TallyTrigger -->
-  <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-700 text-slate-950 font-black text-xl shadow-lg shadow-emerald-500/20 ring-1 ring-white/20 group-hover:scale-105 transition-transform duration-200">
-    <span>TT</span>
-    
-    <!-- Sync Loop Icon Badge -->
-    <svg class="absolute -top-1 -right-1 w-4 h-4 text-emerald-300 drop-shadow" 
-         fill="none" 
-         stroke="currentColor" 
-         stroke-width="2.5" 
-         viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" 
-            d="M4 12a8 8 0 0 1 13.66-5.66L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 0 1-13.66 5.66L4 15.5M4 20v-4.5h4.5" />
-    </svg>
-  </div>
+    <header>
+      <div class="container nav">
+        <a class="brand" href="/" aria-label="TallyTrigger home">
+          <div class="brand-mark">TT</div>
+          <div>
+            <div class="brand-name">TallyTrigger<span>.</span></div>
+            <div class="brand-sub">for Clover POS</div>
+          </div>
+        </a>
 
-  <!-- Text Block: Shifts hierarchy to the approved platform compatibility style -->
-  <div class="flex flex-col text-left leading-none">
-    <div class="flex items-center gap-1.5">
-      <span class="logo-line-1 font-black tracking-tight text-white">
-        TallyTrigger<span class="text-emerald-400">.</span>
-      </span>
-    </div>
-    <span class="text-[9px] font-semibold tracking-wider text-slate-400 uppercase mt-1">
-      Compatible with Clover® POS
-    </span>
-  </div>
-</a>
-
-    <!-- <a href="index.html" class="inline-flex items-center gap-3 font-sans select-none group">
-      <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-700 text-slate-950 font-black text-xl shadow-lg shadow-emerald-500/20 ring-1 ring-white/20 group-hover:scale-105 transition-transform duration-200">
-        <span>R</span>
-<svg class="absolute -top-1 -right-1 w-4 h-4 text-emerald-300 drop-shadow" 
-     fill="none" 
-     stroke="currentColor" 
-     stroke-width="2.5" 
-     viewBox="0 0 24 24">
-  <path stroke-linecap="round" stroke-linejoin="round" 
-        d="M4 12a8 8 0 0 1 13.66-5.66L20 8.5M20 4v4.5h-4.5M20 12a8 8 0 0 1-13.66 5.66L4 15.5M4 20v-4.5h4.5" />
-</svg>
-      </div>
-
-      <div class="flex flex-col text-left leading-none">
-        <div class="flex items-center gap-1.5">
-          <span class="text-2xl font-black tracking-tight text-white">
-            ReportSync<span class="text-emerald-400">.</span>
-          </span>
+        <div class="beta-pill glass-soft">
+          <span class="beta-dot"></span>
+          Private beta
         </div>
-        <span class="text-[10px] font-medium tracking-wider text-slate-400 uppercase mt-1">
-          for Clover® MERCHANTS
-        </span>
       </div>
-    </a> -->
-
     </header>
 
-    <main class="relative z-10 max-w-4xl mx-auto px-6 text-center my-auto">
-<h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-6 animate-start animate-fade-up-delay-1">
-            <span class="headline-gradient"> Automate Your Clover Reports.  </span>
-<br>
-            <span class="text-emerald-400"> Stop Sending Them Manually. </span>
-        </h1>
-        <p class="text-lg text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed animate-start animate-fade-up-delay-2">
-            Automatically retrieve your Clover&reg; POS sales data, format it the way you need, and send reports to your accountant or team on any schedule. Export to XLSX, CSV, PDF, or IIF, or sync your data with QuickBooks and Xero.
-        </p>
+    <main>
 
-                <!-- Email Capture Interface Component -->
-                <fieldset class="form-card p-8 rounded-2xl max-w-md mb-10 mx-auto animate-start animate-fade-up-delay-4">
-                    <legend class="mx-auto px-4 text-sm font-semibold text-slate-200">
-                        Join Here to Get
-                        <span class="text-emerald-400 font-bold">Free</span>
-                        Beta Access
-                    </legend>
-                    <form id="smoke-test-form" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-300 text-left mb-2">Accountant or Store Owner Email Address</label>
-                            <input type="email" id="target-email" required class="input-glow w-full px-4 py-3 bg-slate-900/80 border border-slate-600/80 rounded-lg focus:outline-none focus:border-emerald-400 text-white placeholder-slate-500 transition-all duration-200" placeholder="name@accounting-firm.com">
-                        </div>
-                    <div class="text-left space-y-2 pt-2">
-                        <label class="block text-sm font-medium text-slate-300">
-                            What Clover Plan Do You Use? <span class="text-emerald-400">*</span>
-                        </label>
-                        <div class="space-y-2 bg-slate-900/50 p-3 rounded-lg border border-slate-700/60">
-                            <label class="flex items-center space-x-3 text-slate-500 opacity-60 cursor-not-allowed">
-                                <input type="radio" name="cloverPlan" value="Payment Plus (Not Compatible)" disabled class="text-emerald-500 focus:ring-0 focus:ring-offset-0 bg-slate-900 border-slate-700 cursor-not-allowed">
-                                <span class="text-sm">Payment Plus <span class="text-xs text-amber-500/80 font-medium">(Not Compatible)</span></span>
-                            </label>
-                            <label class="flex items-center space-x-3 text-slate-200 cursor-pointer hover:text-white">
-                                <input type="radio" name="cloverPlan" value="Register Lite/Essentials" required class="text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0 bg-slate-900 border-slate-600 cursor-pointer">
-                                <span class="text-sm">Register Lite / Essentials</span>
-                            </label>
-                            <label class="flex items-center space-x-3 text-slate-200 cursor-pointer hover:text-white">
-                                <input type="radio" name="cloverPlan" value="Register" required class="text-emerald-500 focus:ring-emerald-500 focus:ring-offset-0 bg-slate-900 border-slate-600 cursor-pointer">
-                                <span class="text-sm">Register</span>
-                            </label>
-                        </div>
-                        <p id="plan-error" class="hidden text-xs text-red-400 mt-1">Please select a compatible Clover plan to continue.</p>
-                    </div>
-                    <p class="text-xs text-slate-500 mt-2 text-center">
-                        We'll email you when your beta access is ready. No spam. Unsubscribe anytime.
-                    </p>
-        <p class="text-xs text-slate-500 mt-2 text-center">
-          By submitting, you agree to our <a href="privacy.html" class="underline text-slate-400 hover:text-white">Privacy Policy</a> and <a href="terms.html" class="underline">Terms of Service</a>.
-        </p>
-                        <button type="submit" id="action-btn" class="btn-shine w-full py-3 bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-slate-950 font-bold rounded-lg transition dynamic-colors shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed">
-                            Get Free Beta Access
-                        </button>
-                    </form>
-                    <div id="success-banner" class="hidden text-emerald-400 font-medium text-sm mt-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20"></div>
-        <p class="text-xs text-slate-500 mt-3">
-            No credit card required. Early beta users receive free access during testing and product updates.
-        </p>
-                </fieldset>
-                
-       
-                <!-- Product Value Pillars -->
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 text-left max-w-4xl mx-auto mb-12 animate-start animate-fade-up-delay-3">
-            <div class="pillar-card p-5 rounded-xl">
-                <h3 class="text-emerald-400 font-bold mb-1">Fully Automated</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">Configure once and let the background scheduler fetch, format, and email your reports &mdash; daily, weekly, or monthly &mdash; without manual steps.</p>
+      <section class="hero">
+        <div class="container hero-grid">
+
+          <div class="hero-content">
+
+            <div class="eyebrow glass-soft">
+              <strong>Free private beta</strong>
+              <span class="eyebrow-separator">•</span>
+              <span>No credit card</span>
             </div>
-            <div class="pillar-card p-5 rounded-xl">
-                <h3 class="text-emerald-400 font-bold mb-2">Custom Ledger Mapping</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">Rename any data column to match your accountant's exact template, with the ability to route different report types to different recipients simultaneously.</p>
+
+            <h1>
+              Stop rebuilding
+              <span class="accent">Clover reports</span>
+              for your bookkeeper.
+            </h1>
+
+            <p class="hero-copy">
+              TallyTrigger turns your Clover sales data into one reusable,
+              checked report packet and sends it on your schedule.
+            </p>
+
+            <div class="benefits">
+
+              <div class="benefit">
+                <span class="check">✓</span>
+                <span>
+                  <strong>Save your format once.</strong>
+                  Choose the columns you need, rename them, and reuse the same template.
+                </span>
+              </div>
+
+              <div class="benefit">
+                <span class="check">✓</span>
+                <span>
+                  <strong>Get it automatically.</strong>
+                  Schedule XLSX, CSV, or QuickBooks Desktop IIF-ready output.
+                </span>
+              </div>
+
+              <div class="benefit">
+                <span class="check">✓</span>
+                <span>
+                  <strong>Know what you received.</strong>
+                  Each packet includes checks and a run history so you can review or rerun a period.
+                </span>
+              </div>
+
             </div>
-            <div class="pillar-card p-5 rounded-xl">
-                <h3 class="text-emerald-400 font-bold mb-2">Multi-Format Export</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">Export ledger-ready <strong class="text-slate-300">.XLSX</strong>, printable <strong class="text-slate-300">.PDF</strong>, flat <strong class="text-slate-300">.CSV</strong>, and QuickBooks-compatible <strong class="text-slate-300">.IIF</strong> files. Clean decimals and readable dates &mdash; no manual cleanup.</p>
+
+            <div class="micro-trust">
+              <span>Read-only access to Clover sales data</span>
+              <span>•</span>
+              <span>No accounting connection required</span>
             </div>
-            <div class="pillar-card p-5 rounded-xl">
-                <h3 class="text-emerald-400 font-bold mb-2">QuickBooks/Xero Live Sync</h3>
-                <p class="text-xs text-slate-400 leading-relaxed">Push every Clover sale directly into QuickBooks/Xero Online in real time — no email, no manual import.</p>
+
+          </div>
+
+          <aside class="signup-card glass" id="beta">
+            <div class="card-content">
+
+              <p class="card-kicker">Private beta</p>
+
+              <h2>Want to test it with your Clover store?</h2>
+
+              <p class="card-copy">
+                Leave your email. We’ll contact selected Clover merchants for
+                free beta access and setup.
+              </p>
+
+              <form id="lead-form" novalidate>
+
+                <label for="email">Work email</label>
+
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  inputmode="email"
+                  autocomplete="email"
+                  required
+                  placeholder="you@yourbusiness.com"
+                  class="email-input"
+                />
+
+                <p id="form-error" class="form-error hidden" role="alert"></p>
+
+                <button id="submit-btn" class="submit" type="submit">
+                  Request Free Beta Access
+                </button>
+
+                <div class="form-note">
+                  <span>Free during private beta</span>
+                  <span>•</span>
+                  <span>No credit card</span>
+                </div>
+
+                <p class="legal">
+                  By submitting, you agree to our
+                  <a href="privacy.html">Privacy Policy</a>
+                  and
+                  <a href="terms.html">Terms</a>.
+                </p>
+
+              </form>
+
+              <div id="success" class="hidden">
+
+                <div class="success-card">
+                  <div class="success-icon">✓</div>
+                  <h3>You’re on the beta list.</h3>
+                  <p>
+                    Thanks. We’ll use your email to contact you about private beta access.
+                  </p>
+                </div>
+
+                <div class="qualification">
+                  <p class="qualification-title">
+                    Optional: which Clover plan do you use?
+                  </p>
+
+                  <div class="plan-list">
+                    <button class="plan-btn" type="button" data-plan="Essentials / Register Lite">
+                      Essentials / Register Lite
+                    </button>
+
+                    <button class="plan-btn" type="button" data-plan="Register or higher">
+                      Register or higher
+                    </button>
+
+                    <button class="plan-btn" type="button" data-plan="Payments / Payment Plus">
+                      Payments / Payment Plus
+                    </button>
+
+                    <button class="plan-btn" type="button" data-plan="Not sure">
+                      Not sure
+                    </button>
+                  </div>
+
+                  <p id="plan-note" class="plan-note"></p>
+                </div>
+
+              </div>
+
+              <div class="compatibility">
+                <strong>Beta compatibility:</strong>
+                intended for Clover accounts with order and item data, including
+                Essentials / Register Lite and higher. Payments / Payment Plus
+                accounts are not supported for this beta.
+              </div>
+
             </div>
+          </aside>
+
         </div>
+      </section>
 
+      <section class="value-strip">
+        <div class="container">
+          <div class="value-panel glass-soft">
 
+            <div class="value-item">
+              <p class="value-title">Built for the close</p>
+              <p class="value-copy">
+                Replace repeated downloading, combining, renaming, and checking of Clover reports.
+              </p>
+            </div>
 
-<!-- Product Preview -->
-<section class="max-w-4xl mx-auto mb-12 animate-start animate-fade-up-delay-3" aria-labelledby="preview-heading">
-    <div class="text-center mb-5">
-        <h2 id="preview-heading" class="text-2xl md:text-3xl font-extrabold tracking-tight">
-            See what your reporting workflow looks like
-        </h2>
-        <p class="text-sm text-slate-400 mt-2">
-            Dashboard visibility, scheduled delivery, and an accountant-ready spreadsheet — in one workflow.
-        </p>
-    </div>
+            <div class="value-item">
+              <p class="value-title">Flexible, not complicated</p>
+              <p class="value-copy">
+                Use supported columns, labels, and saved templates instead of a full report builder.
+              </p>
+            </div>
 
-    <div class="grid md:grid-cols-3 gap-4 text-left">
-        <figure class="pillar-card rounded-xl overflow-hidden">
-            <img src="assets/dashboard.png" alt="Sales dashboard showing sales trends, customer sales, purchases, expenses and net profit" class="w-full block preview-image" onclick="openImageLightbox(this.src, this.alt)" style="cursor: zoom-in;">
-            <figcaption class="p-3">
-                <div class="text-sm font-bold text-slate-200">Dashboard</div>
-                <div class="text-xs text-slate-500 mt-1">See sales, profit, purchases and expenses at a glance.</div>
-            </figcaption>
-        </figure>
+            <div class="value-item">
+              <p class="value-title">Recoverable</p>
+              <p class="value-copy">
+                Review delivery history and rerun a period when you need an updated copy.
+              </p>
+            </div>
 
-        <figure class="pillar-card rounded-xl overflow-hidden">
-            <img src="assets/email.png" alt="Scheduled sales summary email" class="w-full block preview-image" onclick="openImageLightbox(this.src, this.alt)" style="cursor: zoom-in;">
-            <figcaption class="p-3">
-                <div class="text-sm font-bold text-slate-200">Scheduled delivery</div>
-                <div class="text-xs text-slate-500 mt-1">Your sales summary arrives by email on your schedule.</div>
-            </figcaption>
-        </figure>
-
-        <figure class="pillar-card rounded-xl overflow-hidden">
-            <img src="assets/sample_report.png" alt="Sales summary spreadsheet with transaction details" class="w-full block preview-image" onclick="openImageLightbox(this.src, this.alt)" style="cursor: zoom-in;">
-            <figcaption class="p-3">
-                <div class="text-sm font-bold text-slate-200">Excel report</div>
-                <div class="text-xs text-slate-500 mt-1">Structured transaction details ready for review.</div>
-            </figcaption>
-        </figure>
-    </div>
-</section>
-
-<!-- Security Section -->
-<div class="max-w-2xl mx-auto mb-10 text-center">
-<h3 class="text-emerald-400 font-bold text-lg mb-3">Security & Privacy</h3>
-<div class="grid md:grid-cols-3 gap-4 text-left mb-4">
-    <div class="pillar-card p-4 rounded-xl">
-        <p class="text-xs font-semibold text-slate-200 mb-1">Secure by Design</p>
-        <p class="text-xs text-slate-400 leading-relaxed">TallyTrigger is being built with strong encryption standards for storing merchant authorization credentials. Security is a core design requirement, not an afterthought.</p>
-    </div>
-    <div class="pillar-card p-4 rounded-xl">
-        <p class="text-xs font-semibold text-slate-200 mb-1">No Card Data Involved</p>
-        <p class="text-xs text-slate-400 leading-relaxed">TallyTrigger works with sales reporting data only. Raw payment card data remains within Clover's own infrastructure — we don't request or receive it.</p>
-    </div>
-    <div class="pillar-card p-4 rounded-xl">
-        <p class="text-xs font-semibold text-slate-200 mb-1">OAuth-Based Access</p>
-        <p class="text-xs text-slate-400 leading-relaxed">TallyTrigger connects to Clover using their official OAuth 2.0 authorization flow — no POS password required. You stay in control and can revoke access at any time.</p>
-    </div>
-</div>
-<p class="text-xs text-slate-500 leading-relaxed">
-    Our goal is to handle your data minimally and responsibly — processing reports without permanently storing raw transaction data. See our <a href="privacy.html" class="underline text-slate-400 hover:text-white">Privacy Policy</a> for full details.
-</p></div>
-<!-- Compatibility Notice -->
-<div class="max-w-2xl mx-auto text-center">
-    <p class="text-xs text-slate-500 leading-relaxed">
-        Designed for supported Clover® POS merchant accounts using Clover APIs.
-        TallyTrigger is an independent application and is not affiliated with or endorsed by Clover Network, LLC or Fiserv, Inc.
-    </p>
-</div>
-
-
-
+          </div>
+        </div>
+      </section>
 
     </main>
 
-<footer class="relative z-10 p-6 text-center text-xs text-slate-500 border-t border-slate-800/60 space-y-2">
-  <!-- Copyright line — update with your real name or registered entity once formed -->
-  <p>
-    &copy; 2026 TallyTrigger. All rights reserved.
-  </p>
-  
-  <!-- Non-Affiliation Disclaimer -->
-  <p class="text-[11px] text-slate-600 max-w-xl mx-auto leading-normal">
-    Clover&reg; is a registered trademark of Clover Network, LLC. This application is independently developed and is not affiliated with, endorsed by, or sponsored by Clover Network, LLC or Fiserv, Inc.
+    <footer>
+      <div class="container footer-copy">
+        <p>
+          TallyTrigger is independently developed and is not affiliated with,
+          endorsed by, or sponsored by Clover Network, LLC or Fiserv, Inc.
+        </p>
+        <p>
+          Clover® is a registered trademark of Clover Network, LLC.
+        </p>
+      </div>
+    </footer>
 
+  </div>
 
-  </p>
-<p class="text-[11px] text-slate-600">
-    Contact: trytallytrigger@yahoo.com
-</p>
-</footer>
-<!-- Image Lightbox -->
-<div id="image-lightbox"
-     style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,.9); align-items:center; justify-content:center; padding:20px;"
-     onclick="closeImageLightbox()">
+  <script>
+    const form = document.getElementById('lead-form');
+    const emailInput = document.getElementById('email');
+    const submitBtn = document.getElementById('submit-btn');
+    const errorBox = document.getElementById('form-error');
+    const successBox = document.getElementById('success');
 
-    <button type="button"
-            onclick="closeImageLightbox(event)"
-            style="position:absolute; top:20px; right:25px; width:44px; height:44px; border:0; border-radius:50%; background:rgba(255,255,255,.15); color:white; font-size:28px; cursor:pointer;">
-        &times;
-    </button>
+    const params = new URLSearchParams(window.location.search);
 
-    <img id="image-lightbox-image"
-         src=""
-         alt=""
-         style="max-width:95vw; max-height:90vh; object-fit:contain; border-radius:12px; box-shadow:0 20px 80px rgba(0,0,0,.6);"
-         onclick="event.stopPropagation()">
-</div>
-    <script>
-        function openImageLightbox(src, alt) {
-        const lightbox = document.getElementById('image-lightbox');
-        const image = document.getElementById('image-lightbox-image');
+    const attribution = {
+      utm_source: params.get('utm_source') || '',
+      utm_medium: params.get('utm_medium') || '',
+      utm_campaign: params.get('utm_campaign') || '',
+      utm_content: params.get('utm_content') || '',
+      utm_term: params.get('utm_term') || '',
+      fbclid: params.get('fbclid') || ''
+    };
 
-        image.src = src;
-        image.alt = alt;
+    let capturedEmail = '';
 
-        lightbox.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
+    function showError(message) {
+      errorBox.textContent = message;
+      errorBox.classList.remove('hidden');
     }
 
-    function closeImageLightbox(event) {
-        if (event) {
-            event.stopPropagation();
-        }
-
-        const lightbox = document.getElementById('image-lightbox');
-        const image = document.getElementById('image-lightbox-image');
-
-        lightbox.style.display = 'none';
-        image.src = '';
-        document.body.style.overflow = '';
+    function clearError() {
+      errorBox.textContent = '';
+      errorBox.classList.add('hidden');
     }
 
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeImageLightbox();
-        }
-    });
-        document.getElementById('smoke-test-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const uniqueEventId = 'lead_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    form.addEventListener('submit', async function(event) {
+      event.preventDefault();
+      clearError();
 
-            const planError = document.getElementById('plan-error');
-            const selectedPlanInput = document.querySelector('input[name="cloverPlan"]:checked');
+      const email = emailInput.value.trim();
 
-            if (!selectedPlanInput || selectedPlanInput.disabled) {
-                planError.classList.remove('hidden');
-                return;
-            } else {
-                planError.classList.add('hidden');
-            }
+      if (!email || !emailInput.validity.valid) {
+        showError('Enter a valid email address.');
+        emailInput.focus();
+        return;
+      }
 
-            const cloverPlanValue = selectedPlanInput.value;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Requesting access…';
+      capturedEmail = email;
 
-            const emailValue = document.getElementById('target-email').value;
-            if (!emailValue || !emailValue.includes('@')) {
-                alert('Please enter a valid email address.');
-                return;
-            }
+      try {
+        const eventId =
+          'lead_' +
+          Date.now() +
+          '_' +
+          Math.random().toString(36).slice(2, 10);
 
-            fbq('track', 'Lead', {content_category: 'Sign Up Form'}, { eventID: uniqueEventId });
-
-            const actionBtn = document.getElementById('action-btn');
-            const successBanner = document.getElementById('success-banner');
-
-            actionBtn.disabled = true;
-            actionBtn.innerText = "Joining Waitlist...";
-            
-            try {
-                const response = await fetch('/api/signup', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: emailValue, cloverPlan: cloverPlanValue, eventId: uniqueEventId })
-                });
-                const payload = await response.json();
-                
-                if (response.ok) {
-
-                    document.getElementById('smoke-test-form').reset();
-                    successBanner.innerText = payload.message;
-                    successBanner.classList.remove('hidden');
-                } else {
-                    alert(payload.error || "Unable to join the waitlist. Please try again.");
-                }
-            } catch (err) {
-                console.error("Signup error:", err);
-                alert("Error: " + err.message);
-            } finally {
-                actionBtn.disabled = false;
-                actionBtn.innerText = "Get Free Beta Access";
-            }
+        const response = await fetch('/api/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email: email,
+            cloverPlan: 'Not asked before lead capture',
+            eventId: eventId,
+            ...attribution
+          })
         });
-    </script>
+
+        let payload = {};
+
+        try {
+          payload = await response.json();
+        } catch (_) {}
+
+        if (!response.ok) {
+          throw new Error(
+            payload.error ||
+            'We could not save your request. Please try again.'
+          );
+        }
+
+        /*
+          Fire the Meta Lead event only after the signup API confirms success.
+        */
+        if (typeof fbq === 'function') {
+          fbq(
+            'track',
+            'Lead',
+            { content_category: 'Private Beta' },
+            { eventID: eventId }
+          );
+        }
+
+        form.classList.add('hidden');
+        successBox.classList.remove('hidden');
+
+      } catch (error) {
+        showError(
+          error.message ||
+          'Something went wrong. Please try again.'
+        );
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Request Free Beta Access';
+      }
+    });
+
+    document.querySelectorAll('.plan-btn').forEach(function(button) {
+
+      button.addEventListener('click', async function() {
+
+        const plan = button.dataset.plan;
+
+        document.querySelectorAll('.plan-btn').forEach(function(other) {
+          other.classList.remove('selected');
+        });
+
+        button.classList.add('selected');
+
+        const note = document.getElementById('plan-note');
+
+        if (plan === 'Payments / Payment Plus') {
+          note.textContent =
+            'Thanks. This plan does not provide the order/item access needed for the current beta.';
+        } else {
+          note.textContent =
+            'Thanks — that helps us prioritize beta invitations.';
+        }
+
+        /*
+          Optional qualification endpoint.
+          The main lead has already been captured.
+          Remove this fetch if you do not have /api/signup/qualify.
+        */
+        try {
+          await fetch('/api/signup/qualify', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              email: capturedEmail,
+              cloverPlan: plan
+            })
+          });
+        } catch (_) {
+          /* Qualification failure does not affect the captured lead. */
+        }
+
+      });
+
+    });
+  </script>
 </body>
 </html>
